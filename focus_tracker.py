@@ -9,7 +9,9 @@ focus_data = []  # Stores all the focus session data
 session_data = {}  # Temporarily stores data for each session
 start_time = None
 lap_counter = 0
-json_file = r'C:\Users\ahmty\Desktop\Python\focus_tracker\Focus_tracker\database\focus_sessions_v3.json'  # JSON dosyasının tam yolu
+
+json_file = r'C:\Users\ahmty\Desktop\focus_sessions_v3.json'  # JSON dosyasının tam yolu
+
 
 # Function to handle the first button click (Start Focusing)
 def start_focusing():
@@ -50,8 +52,9 @@ def lap_click():
 def terminate_session():
     global session_data, focus_data
 
-    # Record the end time in an unnamed column
+    # Record the end time
     end_time = datetime.now().strftime("%H:%M:%S")
+    session_data["End Time"] = end_time  # Bitiş zamanını ekliyoruz
     session_data[f"Lap #{lap_counter}"] = end_time  # Use Lap counter for last lap
     
     # Save the session data
