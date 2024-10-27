@@ -66,7 +66,3 @@ Feel free to fork this project, create new branches, and submit pull requests. A
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
-
----
-
-Feel free to customize the content to match your needs or to specify any additional requirements.
