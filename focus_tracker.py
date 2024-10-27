@@ -1,0 +1,121 @@
+import tkinter as tk
+from datetime import datetime
+import pandas as pd
+import os
+
+# Global variables
+focus_data = []  # Stores all the focus session data
+session_data = {}  # Temporarily stores data for each session
+start_time = None
+lap_counter = 0
+csv_file = 'focus_sessions_v3.csv'
+
+# Function to handle the first button click (Start Focusing)
+def start_focusing():
+    global start_time, session_data, lap_counter
+
+    start_time = datetime.now()
+    day_str = start_time.strftime("%A")  # Example: Sunday
+    start_date_str = start_time.strftime("%d-%b-%y")  # Example: 20-Oct-24
+    start_time_str = start_time.strftime("%H:%M:%S")  # Example: 12:51:44
+    
+    # Initialize the session data
+    session_data = {
+        "Day": day_str,  # Store the day
+        "Start Time": start_date_str,
+        "Start DateTime": start_time_str  # Start time for the session
+    }
+    
+    label_status.config(text="Session started at: " + start_time_str)
+    
+    # Change buttons after starting the session
+    btn_start.pack_forget()
+    btn_lap.pack(pady=10)
+    btn_terminate.pack(pady=10)
+    
+    lap_counter = 1  # Reset lap counter for the new session
+
+# Function to record each lap time
+def lap_click():
+    global lap_counter
+
+    lap_time = datetime.now().strftime("%H:%M:%S")  # Only the time
+    session_data[f"Lap #{lap_counter}"] = lap_time  # Dynamically add lap time
+    label_status.config(text=f"Lap {lap_counter} recorded at: " + lap_time)
+    
+    lap_counter += 1
+
+# Function to handle session termination
+def terminate_session():
+    global session_data, focus_data
+
+    # Record the end time in an unnamed column
+    end_time = datetime.now().strftime("%H:%M:%S")
+    session_data[f"Lap #{lap_counter}"] = end_time  # Use Lap counter for last lap
+    
+    # Save the session data
+    focus_data.append(session_data)
+    save_to_csv()  # Save to CSV
+
+    # Reset the application state
+    reset_session()
+    
+    # Exit the application and reset for a new session
+    root.quit()
+
+# Function to save all session data to a CSV file
+def save_to_csv():
+    global focus_data, csv_file
+
+    # Check if the CSV file already exists
+    if os.path.exists(csv_file):
+        # If it exists, append the new data to the existing file
+        df_existing = pd.read_csv(csv_file)
+        df_new = pd.DataFrame(focus_data)
+        df_combined = pd.concat([df_existing, df_new], ignore_index=True)
+        df_combined.to_csv(csv_file, index=False)
+    else:
+        # If not, create a new file and write the data
+        df_new = pd.DataFrame(focus_data)
+        df_new.to_csv(csv_file, index=False)
+
+    # Clear focus_data after saving to avoid duplicates
+    focus_data.clear()
+
+# Function to reset the session variables and buttons
+def reset_session():
+    global session_data, lap_counter
+
+    session_data = {}
+    lap_counter = 0
+    
+    # Reset the buttons and labels
+    btn_lap.pack_forget()
+    btn_terminate.pack_forget()
+    btn_start.pack(pady=10)
+    label_status.config(text="Click to start focusing")
+
+# Tkinter setup
+root = tk.Tk()
+root.title("Focus Time Tracker")
+
+label_status = tk.Label(root, text="Click to start focusing", font=("Arial", 14))
+label_status.pack(pady=20)
+
+# Start focusing button
+btn_start = tk.Button(root, text="Start Focusing", font=("Arial", 12), command=start_focusing)
+btn_start.pack(pady=10)
+
+# Lap button (Initially hidden)
+btn_lap = tk.Button(root, text="Lap", font=("Arial", 12), command=lap_click)
+
+# Terminate the session button (Initially hidden)
+btn_terminate = tk.Button(root, text="Terminate the Session", font=("Arial", 12), command=terminate_session, fg="red")
+
+# Start the application loop
+root.mainloop()
+
+# After closing the application, restart with default state
+reset_session()
+
+# Please do not forget that the last record in the row is the termination time. Yes it seems as one of Lap but it is the closing timeof the app
