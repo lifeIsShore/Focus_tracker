@@ -9,7 +9,7 @@ focus_data = []  # Stores all the focus session data
 session_data = {}  # Temporarily stores data for each session
 start_time = None
 lap_counter = 0
-json_file = r'C:\Users\ahmty\Desktop\Python\focus_tracker\Focus_tracker\database\focus_sessions_v3.json'  # JSON dosyasının tam yolu
+json_file = r'C:\Users\ahmty\Desktop\Python\focus_tracker\database'  # JSON dosyasının tam yolu
 
 # Function to handle the first button click (Start Focusing)
 def start_focusing():
