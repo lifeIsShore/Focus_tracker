@@ -67,9 +67,11 @@ def terminate_session():
 
     # Reset the application state
     reset_session()
-    
-    # Exit the application and reset for a new session
+
+    # Exit the application and close the window
     root.quit()
+    root.destroy()  # This line will close the Tkinter window
+
 
 # Function to save all session data to a JSON file
 def save_to_json():
